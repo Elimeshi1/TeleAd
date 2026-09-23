@@ -22,7 +22,7 @@ Implements the Telegram Ads API as documented on September 18, 2026.
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .client import Client
 from .errors import (
