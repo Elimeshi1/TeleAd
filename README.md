@@ -1,7 +1,7 @@
 # telead
 
-[![PyPI](https://img.shields.io/pypi/v/telead)](https://pypi.org/project/telead/)
-[![Python](https://img.shields.io/pypi/pyversions/telead)](https://pypi.org/project/telead/)
+[![PyPI](https://img.shields.io/pypi/v/telead?v=1)](https://pypi.org/project/telead/)
+[![Python](https://img.shields.io/pypi/pyversions/telead?v=1)](https://pypi.org/project/telead/)
 [![Docs](https://img.shields.io/badge/docs-elimeshi1.github.io-blue)](https://elimeshi1.github.io/TeleAd/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/Elimeshi1/TeleAd/blob/main/LICENSE)
 
