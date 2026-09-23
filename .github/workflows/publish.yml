@@ -1,14 +1,16 @@
 name: Publish to PyPI
 
-# Publishes telead to PyPI when a v* tag is pushed (a GitHub release is then
-# created for it), or when a GitHub release is published by hand.
+# Publishes telead to PyPI. Three ways to start it:
+#   * Actions → Publish to PyPI → Run workflow — publishes the version in
+#     telead/__init__.py and creates the v<version> tag and GitHub release;
+#   * pushing a v<version> tag — the same, for an existing tag;
+#   * publishing a GitHub release by hand — publishes only.
 # Uses PyPI Trusted Publishing, so no token is stored in the repository.
 # One-time setup on pypi.org: Publishing → Add a pending publisher →
 #   owner Elimeshi1, repository TeleAd, workflow publish.yml, environment pypi.
 #
-# To release: bump __version__ in telead/__init__.py, push, then push a tag
-#   git tag v<version> && git push origin v<version>
-# or create a release whose tag is v<version> (for example v0.1.0).
+# To release: bump __version__ in telead/__init__.py, push, then use one of
+# the three above.
 
 on:
   push:
@@ -57,7 +59,6 @@ jobs:
 
   publish:
     needs: build
-    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -72,19 +73,26 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
   github-release:
-    # A pushed tag gets a GitHub release too; a release published by hand
-    # already has one.
+    # A release published by hand already has one; the other triggers get one
+    # here. On a manual run this also creates the v<version> tag.
     needs: publish
-    if: github.event_name == 'push'
+    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          version=$(python -c "import re; print(re.search(r'__version__ = \"(.+?)\"', open('telead/__init__.py').read()).group(1))")
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: dist/*
