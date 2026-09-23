@@ -42,6 +42,9 @@ client.edit_ad(ad.ad_id, daily_budget_limit=15)     # at most 15 a day; 0 remove
 
 An agency's main account can create accounts for its clients, fund them from its own budget, and manage them with the same token.
 
+!!! note "Main accounts only"
+    Everything in this section needs a [main account](concepts.md#3-accounts-current-main-and-related). From an ordinary advertiser account these methods raise `PermissionDeniedError` (`MAIN_ACCOUNT_REQUIRED`). Ad budgets, above, and the transaction lists, below, work from any account.
+
 ### Create
 
 ```python

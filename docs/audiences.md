@@ -4,6 +4,9 @@
 
 An audience is a list of phone numbers — your customers, say — that a **users** target can include or exclude.
 
+!!! note "Not every account has retargeting"
+    If retargeting is not enabled for the account, every method here raises `PermissionDeniedError` with the code `RETARGETING_DISABLED`.
+
 ## Create
 
 ```python

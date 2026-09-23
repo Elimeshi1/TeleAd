@@ -30,7 +30,12 @@ result = client.call("someNewMethod", {"ad_id": 42})
 
 ## 3. Accounts: current, main and related
 
-A token belongs to one account — the **current account**. An agency's main account can create **related accounts** (one per client, say) and move budget to and from them.
+A token belongs to one account — the **current account**. It is one of two kinds:
+
+* An **ordinary advertiser account** — what you get by logging in at ads.telegram.org and advertising for yourself. It has its own budget and ads.
+* A **main account** — an agency-level account that can create **related accounts** (one per client, say), fund them from its own budget, and manage all of them with its one token.
+
+Methods that deal with related accounts — `getRelatedAccountsList`, `getAccountsById`, `createAccount`, the account budget transfers and `getTransactionStatus` — only work from a main account. From an ordinary one they raise [`PermissionDeniedError`](errors.md) with the code `MAIN_ACCOUNT_REQUIRED`. The API has no method that turns an ordinary account into a main one.
 
 Most methods act on the current account unless you pass `account_id`:
 

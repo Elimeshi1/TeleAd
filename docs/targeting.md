@@ -9,7 +9,7 @@ Every ad has one target, of one of four types. Pass it as an object from `telead
 | `bots` | `InputAdTargetBots` | in chosen bots |
 | `search` | `InputAdTargetSearch` | in search results for chosen queries |
 
-Pair the target with a `placement`: `channel_post`, `bot_banner`, `search_result` or `video_banner`. The API documents the placements but not which target each one allows; a combination it does not accept is rejected by `createAd` with an [`APIError`](errors.md).
+Pair the target with a `placement`: `channel_post`, `bot_banner`, `search_result` or `video_banner`. The API documents the placements but not which target each one allows; a combination it does not accept is rejected by `createAd` with an [`APIError`](errors.md). Combinations seen on live ads: `channel_post` and `video_banner` with `users` targeting, and `bot_banner` with `bots` targeting.
 
 Every target validates itself against the documented caps before it is sent — see [Targets and schedules](inputs.md) for the full rules.
 

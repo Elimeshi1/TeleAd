@@ -4,6 +4,9 @@
 
 For an ad that sends people to a website, the **Pixel Tag** measures what they do there. It has two parts: a base snippet on every page, and **events** for the actions you count as conversions.
 
+!!! note "Not every account has the pixel"
+    If the account has no access to the Pixel Tag, every method here raises `PermissionDeniedError` with the code `ACCESS_DENIED`.
+
 ## 1. Create the pixel
 
 Once per account:

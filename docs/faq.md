@@ -25,6 +25,16 @@ Separately from the minimum, some features need a higher CPM to actually be show
 
 Numeric channel and bot ids can only be used after this account has resolved that channel by username. Use `"@username"` — or resolve it once with `client.get_target_channel("@username")`, after which the numeric id works too. [Details](targeting.md#resolving-channels-and-bots).
 
+## I get `MAIN_ACCOUNT_REQUIRED`, `RETARGETING_DISABLED` or `ACCESS_DENIED`
+
+These raise [`PermissionDeniedError`](errors.md): the account cannot use that part of the API at all, so fixing the parameters or retrying will not help.
+
+* `MAIN_ACCOUNT_REQUIRED` — the method is for [main (agency) accounts](concepts.md#3-accounts-current-main-and-related), and this token belongs to an ordinary advertiser account. Related accounts, transfers between accounts and `getTransactionStatus` are out of reach; everything about your own ads works.
+* `RETARGETING_DISABLED` — retargeting audiences are not enabled for the account.
+* `ACCESS_DENIED` — the account has no access to the feature, for example the Pixel Tag.
+
+To find out what a token can do, call a read method from each area and see which ones raise it.
+
 ## Can one token manage several accounts?
 
 Yes, if they are related accounts of the token's account. Pass `account_id=` to any method, or make a view:

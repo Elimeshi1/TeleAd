@@ -24,6 +24,7 @@ __all__ = [
     "InvalidRequestError",
     "UnknownPeerError",
     "NotEnoughBudgetError",
+    "PermissionDeniedError",
     "IdempotencyMismatchError",
     "RequestInProgressError",
     "RateLimitError",
@@ -102,6 +103,20 @@ class UnknownPeerError(InvalidRequestError):
     """
 
 
+class PermissionDeniedError(APIError):
+    """The account may not use this method or feature.
+
+    * ``MAIN_ACCOUNT_REQUIRED`` — the method is for main (agency) accounts,
+      which own related accounts; this token belongs to an ordinary one.
+    * ``RETARGETING_DISABLED`` — retargeting audiences are not enabled for
+      this account.
+    * ``ACCESS_DENIED`` — the account has no access to this feature (for
+      example the Pixel Tag).
+
+    Repeating the call will not help; the account itself has to change.
+    """
+
+
 class NotEnoughBudgetError(APIError):
     """``NOT_ENOUGH_BUDGET`` — the source budget cannot cover the amount."""
 
@@ -147,10 +162,16 @@ _CODE_MAP: dict[str, type[APIError]] = {
     "CHANNEL_ID_UNKNOWN": UnknownPeerError,
     "BOT_ID_UNKNOWN": UnknownPeerError,
     "NOT_ENOUGH_BUDGET": NotEnoughBudgetError,
+    "MAIN_ACCOUNT_REQUIRED": PermissionDeniedError,
+    "RETARGETING_DISABLED": PermissionDeniedError,
+    "ACCESS_DENIED": PermissionDeniedError,
     "IDEMPOTENT_PARAM_MISMATCH": IdempotencyMismatchError,
     "IDEMPOTENT_REQUEST_IN_PROGRESS": RequestInProgressError,
     "TOO_MANY_REQUESTS": RateLimitError,
 }
+
+#: Code suffixes that mean the account lacks access to a method or feature.
+_DENIED_SUFFIXES = ("_DENIED", "_DISABLED", "_FORBIDDEN")
 
 #: Code suffixes that mean the request itself was at fault.
 _INVALID_SUFFIXES = ("_REQUIRED", "_INVALID", "_TOO_LONG", "_TOO_SHORT", "_EMPTY", "_TOO_MANY")
@@ -199,6 +220,8 @@ def error_from_response(
     if cls is None:
         if code.startswith("ACCESS_TOKEN_"):
             cls = AuthenticationError
+        elif code.endswith(_DENIED_SUFFIXES):
+            cls = PermissionDeniedError
         elif code.endswith(_INVALID_SUFFIXES):
             cls = InvalidRequestError
         elif status >= 500:

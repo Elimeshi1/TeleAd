@@ -10,6 +10,7 @@ TeleadError
     ├── AuthenticationError          ACCESS_TOKEN_REQUIRED, ACCESS_TOKEN_INVALID
     ├── InvalidRequestError          *_REQUIRED, *_INVALID, *_TOO_LONG, …
     │   └── UnknownPeerError         CHANNEL_ID_UNKNOWN, BOT_ID_UNKNOWN
+    ├── PermissionDeniedError        MAIN_ACCOUNT_REQUIRED, RETARGETING_DISABLED, ACCESS_DENIED
     ├── NotEnoughBudgetError         NOT_ENOUGH_BUDGET
     ├── IdempotencyMismatchError     IDEMPOTENT_PARAM_MISMATCH
     ├── RequestInProgressError       IDEMPOTENT_REQUEST_IN_PROGRESS
@@ -18,7 +19,7 @@ TeleadError
 ```
 
 ```python
-from telead import APIError, UnknownPeerError, ValidationError
+from telead import APIError, PermissionDeniedError, UnknownPeerError, ValidationError
 
 try:
     client.create_ad(...)
@@ -26,6 +27,8 @@ except ValidationError as exc:
     ...        # never left the process: text too long, bad placement, too many topics
 except UnknownPeerError:
     ...        # use "@username" instead of a numeric id
+except PermissionDeniedError:
+    ...        # this account cannot use the feature at all
 except APIError as exc:
     print(exc.code)        # e.g. "AD_TITLE_REQUIRED"
 ```
@@ -48,8 +51,9 @@ The API documentation names a handful of codes; the rest follow a naming pattern
 1. Known codes — the ones in the tree above.
 2. `FLOOD_WAIT_<n>` or HTTP 429 → `RateLimitError`, with `retry_after` set to *n* or the `Retry-After` header.
 3. Any other `ACCESS_TOKEN_*` → `AuthenticationError`.
-4. Codes ending in `_REQUIRED`, `_INVALID`, `_TOO_LONG`, `_TOO_SHORT`, `_EMPTY` or `_TOO_MANY` → `InvalidRequestError`.
-5. Anything else → `APIError`, or `ServerError` for HTTP 5xx.
+4. Codes ending in `_DENIED`, `_DISABLED` or `_FORBIDDEN` → `PermissionDeniedError`.
+5. Codes ending in `_REQUIRED`, `_INVALID`, `_TOO_LONG`, `_TOO_SHORT`, `_EMPTY` or `_TOO_MANY` → `InvalidRequestError`.
+6. Anything else → `APIError`, or `ServerError` for HTTP 5xx.
 
 A response that is not the API's JSON at all — a gateway error page, an empty body — raises `ServerError` with `code` set to `HTTP_<status>`.
 
@@ -61,6 +65,9 @@ A response that is not the API's JSON at all — a gateway error page, an empty 
 | `ACCESS_TOKEN_INVALID` | `AuthenticationError` | The token is wrong or no longer valid. |
 | `CHANNEL_ID_UNKNOWN` | `UnknownPeerError` | A numeric channel id this account never resolved by username. [More](targeting.md#resolving-channels-and-bots). |
 | `BOT_ID_UNKNOWN` | `UnknownPeerError` | The same, for a bot. |
+| `MAIN_ACCOUNT_REQUIRED` | `PermissionDeniedError` | The method needs a [main account](concepts.md#3-accounts-current-main-and-related); this one is an ordinary advertiser account. Returned by `getRelatedAccountsList`, `getAccountsById` and `getTransactionStatus`, among others. |
+| `RETARGETING_DISABLED` | `PermissionDeniedError` | [Retargeting audiences](audiences.md) are not enabled for this account. |
+| `ACCESS_DENIED` | `PermissionDeniedError` | The account has no access to this feature — the [Pixel Tag](pixel.md), for example. |
 | `NOT_ENOUGH_BUDGET` | `NotEnoughBudgetError` | The source budget cannot cover the amount. Also appears as `TransactionStatus.error` on a failed transfer. |
 | `IDEMPOTENT_PARAM_MISMATCH` | `IdempotencyMismatchError` | A key was reused with different parameters. |
 | `IDEMPOTENT_REQUEST_IN_PROGRESS` | `RequestInProgressError` | The first request with this key is still running. Retried automatically. |

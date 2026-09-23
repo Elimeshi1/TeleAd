@@ -8,6 +8,7 @@ from telead.errors import (
     IdempotencyMismatchError,
     InvalidRequestError,
     NotEnoughBudgetError,
+    PermissionDeniedError,
     RateLimitError,
     RequestInProgressError,
     ServerError,
@@ -28,6 +29,10 @@ from telead.errors import (
     ("AD_TITLE_REQUIRED", InvalidRequestError),
     ("CPM_INVALID", InvalidRequestError),
     ("TEXT_TOO_LONG", InvalidRequestError),
+    ("MAIN_ACCOUNT_REQUIRED", PermissionDeniedError),
+    ("RETARGETING_DISABLED", PermissionDeniedError),
+    ("ACCESS_DENIED", PermissionDeniedError),
+    ("PIXEL_DISABLED", PermissionDeniedError),
     ("SOMETHING_NEW", APIError),
 ])
 def test_code_mapping(code, cls):
@@ -73,3 +78,9 @@ def test_str_includes_method_and_status():
 def test_retryable_flags():
     assert not InvalidRequestError("X").retryable
     assert RequestInProgressError("X").retryable
+
+
+def test_permission_errors_are_not_invalid_requests():
+    # MAIN_ACCOUNT_REQUIRED ends in _REQUIRED but is about the account, not a parameter.
+    error = error_from_response(200, {"ok": False, "error": "MAIN_ACCOUNT_REQUIRED"})
+    assert not isinstance(error, InvalidRequestError) and not error.retryable
