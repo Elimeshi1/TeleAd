@@ -2,7 +2,7 @@
 
 ## Where do I get a token?
 
-In the Telegram Ads account settings at [ads.telegram.org](https://ads.telegram.org). See [Getting started](getting-started.md#2-get-an-access-token).
+At [ads.telegram.org/account/api](https://ads.telegram.org/account/api), logged in with the account that owns the ads. See [Getting started](getting-started.md#2-get-an-access-token).
 
 ## Why does creating an ad not start it straight away?
 

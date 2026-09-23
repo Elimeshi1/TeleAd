@@ -12,8 +12,8 @@ pip install telead
 
 The API uses a token tied to your advertiser account.
 
-1. Log in at [ads.telegram.org](https://ads.telegram.org) with the Telegram account that owns the advertiser account.
-2. Open the **account settings** and get an **access token** for the API.
+1. Open **[ads.telegram.org/account/api](https://ads.telegram.org/account/api)** and log in with the Telegram account that owns the advertiser account.
+2. Copy the **access token** shown there.
 3. Keep it somewhere safe — an environment variable, a secrets manager. Anyone holding it can spend the account's budget.
 
 ```bash
@@ -21,7 +21,7 @@ export TELEGRAM_ADS_TOKEN="…"
 ```
 
 !!! warning "Treat the token like a password"
-    It carries full control of the account: creating ads, moving budget between accounts, deleting audiences. Never commit it, never log it, and revoke it in the account settings if it leaks.
+    It carries full control of the account: creating ads, moving budget between accounts, deleting audiences. Never commit it, never log it, and replace it at [ads.telegram.org/account/api](https://ads.telegram.org/account/api) if it leaks.
 
 ## 3. Make a first call
 

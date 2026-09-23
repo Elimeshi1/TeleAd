@@ -98,7 +98,7 @@ class Client:
             print(account.title, account.remaining_budget, account.currency)
 
     Args:
-        token: The access token from Telegram Ads → account settings.  Sent as
+        token: The access token from https://ads.telegram.org/account/api.  Sent as
             ``Authorization: Bearer <token>``.  Treat it as a secret.
         account_id: Act on this related account by default.  Every method
             whose ``account_id`` is optional uses it when you leave the

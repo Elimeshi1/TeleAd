@@ -26,6 +26,8 @@ ad = client.create_ad(
 print(ad.ad_id, ad.status)
 ```
 
+The access token is at **[ads.telegram.org/account/api](https://ads.telegram.org/account/api)**.
+
 ## Install
 
 ```bash
